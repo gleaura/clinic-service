@@ -23,6 +23,11 @@ spring:
   mvc:
     problemdetails:
       enabled: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
 
 jwt:
   secret: ${JWT_SECRET:5rDmTtqp7KKanOl22OzBh6lC509zs1uuoLoiJkf97gAveb3m1s8SvRn1ugaxvbSm+lwCEn3FG7oRp9JXv58/Dg==}
