@@ -30,8 +30,9 @@ public class AppointmentEntity extends BaseEntity {
     @Column(name = "DURATION_MINUTES")
     private Integer durationMinutes;
 
-    @Column(name = "DOCTOR", length = 150)
-    private String doctor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STAFF_ID")
+    private StaffEntity staff;
 
     @Column(name = "TYPE", length = 100)
     private String type;

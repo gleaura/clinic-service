@@ -15,7 +15,8 @@ public class AppointmentResponse {
     private String patientFullName;
     private LocalDateTime appointmentDate;
     private Integer durationMinutes;
-    private String doctor;
+    private Long staffId;
+    private String staffFullName;
     private String type;
     private String note;
     private AppointmentStatus status;

@@ -17,7 +17,7 @@ public class AppointmentCreateRequest {
     private LocalDateTime appointmentDate;
 
     private Integer durationMinutes;
-    private String doctor;
+    private Long staffId;
     private String type;
     private String note;
 }

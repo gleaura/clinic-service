@@ -5,12 +5,14 @@ import com.gleaura.clinic.service.dto.request.AppointmentUpdateRequest;
 import com.gleaura.clinic.service.dto.response.AppointmentResponse;
 import com.gleaura.clinic.service.entity.AppointmentEntity;
 import com.gleaura.clinic.service.entity.PatientEntity;
+import com.gleaura.clinic.service.entity.StaffEntity;
 import com.gleaura.clinic.service.enums.AppointmentStatus;
 import com.gleaura.clinic.service.exception.BusinessException;
 import com.gleaura.clinic.service.exception.ErrorCode;
 import com.gleaura.clinic.service.mapper.AppointmentMapper;
 import com.gleaura.clinic.service.repository.AppointmentRepository;
 import com.gleaura.clinic.service.repository.PatientRepository;
+import com.gleaura.clinic.service.repository.StaffRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,7 +21,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +34,7 @@ public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final PatientRepository patientRepository;
+    private final StaffRepository staffRepository;
     private final AppointmentMapper appointmentMapper;
 
     @Transactional(readOnly = true)
@@ -54,6 +61,17 @@ public class AppointmentService {
         return appointmentRepository.findAllByPatient_Id(patientId, pageable).map(appointmentMapper::toResponse);
     }
 
+    @Transactional(readOnly = true)
+    public List<AppointmentResponse> getDailyAppointments(LocalDate date) {
+        log.info("Günlük randevular getiriliyor. date: {}", date);
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.atTime(LocalTime.MAX);
+        return appointmentRepository.findAllByAppointmentDateBetween(start, end)
+                .stream()
+                .map(appointmentMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public AppointmentResponse create(AppointmentCreateRequest request, String createdIp) {
         log.info("Randevu oluşturuluyor. patientId: {}", request.getPatientId());
@@ -65,7 +83,11 @@ public class AppointmentService {
         entity.setPatient(patient);
         entity.setAppointmentDate(request.getAppointmentDate());
         entity.setDurationMinutes(request.getDurationMinutes());
-        entity.setDoctor(request.getDoctor());
+        if (request.getStaffId() != null) {
+            StaffEntity staff = staffRepository.findById(request.getStaffId())
+                    .orElseThrow(() -> new BusinessException("Personel bulunamadı. id: " + request.getStaffId(), ErrorCode.ENTITY_NOT_FOUND, HttpStatus.NOT_FOUND));
+            entity.setStaff(staff);
+        }
         entity.setType(request.getType());
         entity.setNote(request.getNote());
         entity.setStatus(AppointmentStatus.SCHEDULED);
@@ -85,7 +107,11 @@ public class AppointmentService {
 
         entity.setAppointmentDate(request.getAppointmentDate());
         if (request.getDurationMinutes() != null) entity.setDurationMinutes(request.getDurationMinutes());
-        if (request.getDoctor() != null) entity.setDoctor(request.getDoctor());
+        if (request.getStaffId() != null) {
+            StaffEntity staff = staffRepository.findById(request.getStaffId())
+                    .orElseThrow(() -> new BusinessException("Personel bulunamadı. id: " + request.getStaffId(), ErrorCode.ENTITY_NOT_FOUND, HttpStatus.NOT_FOUND));
+            entity.setStaff(staff);
+        }
         if (request.getType() != null) entity.setType(request.getType());
         if (request.getNote() != null) entity.setNote(request.getNote());
         entity.setUpdatedBy("SYSTEM");
