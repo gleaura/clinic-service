@@ -1,0 +1,14 @@
+# Docker Commands - clinic-service
+
+## Build
+docker build -t ozanemrahyakupoglu/clinic-service:1.0.0 .
+
+## Push (Docker Hub)
+docker push ozanemrahyakupoglu/clinic-service:1.0.0
+
+## Run
+docker run -d \
+  --name clinic-service \
+  -p 8080:8080 \
+  -e DB_PASSWORD=123456789 \
+  ozanemrahyakupoglu/clinic-service:1.0.0
