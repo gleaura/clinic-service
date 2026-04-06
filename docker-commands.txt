@@ -9,6 +9,6 @@ docker push ozanemrahyakupoglu/clinic-service:1.0.0
 ## Run
 docker run -d \
   --name clinic-service \
-  -p 8080:8080 \
+  -p 8090:8090 \
   -e DB_PASSWORD=123456789 \
   ozanemrahyakupoglu/clinic-service:1.0.0
