@@ -56,7 +56,10 @@ public class SecurityConfig {
                 "http://localhost:8091",
                 "http://localhost:8092",
                 "http://46.225.97.71:3000",
-                "https://gleaura.com"
+                "http://46.225.97.71:8091",
+                "http://46.225.97.71:8092",
+                "https://clinic.onbtech.com",
+                "https://clinic-mobile.onbtech.com"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
